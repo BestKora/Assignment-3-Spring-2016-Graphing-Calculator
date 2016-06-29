@@ -11,6 +11,11 @@ import UIKit
 class CalculatorViewController: UIViewController {
     @IBOutlet weak var history: UILabel!
     @IBOutlet private weak var display: UILabel!
+    @IBOutlet weak var graph: UIButton!{
+        didSet{
+            graph.enabled = false
+        }
+    }
     
     private var userIsInTheMiddleOfTyping = false
     let decimalSeparator = formatter.decimalSeparator ?? "."
@@ -36,7 +41,7 @@ class CalculatorViewController: UIViewController {
     
     private var resultValue: (Double, String?) = (0.0, nil) {
         didSet {
-            
+            graph.enabled = !brain.isPartialResult
             switch resultValue {
             case (_, nil) : displayValue = resultValue.0
             case (_, let error):
@@ -127,6 +132,37 @@ class CalculatorViewController: UIViewController {
     @IBAction func pushM(sender: UIButton) {
         brain.setOperand(sender.currentTitle!)
         resultValue = brain.result
+    }
+    
+    // MARK: - Navigation
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String,
+                                                   sender: AnyObject?) -> Bool {
+        return !brain.isPartialResult
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let graphVC = segue.destinationViewController.contentViewController
+                                                         as? GraphViewController,
+               identifier = segue.identifier where identifier == "Show Graph" {
+            
+            graphVC.navigationItem.title = brain.description
+            
+            graphVC.yForX = { [ weak weakSelf = self] x in
+                weakSelf?.brain.variableValues["M"] = x
+                return weakSelf?.brain.result.0
+            }
+        }
+    }
+}
+
+extension UIViewController {
+    var contentViewController: UIViewController {
+        if let navcon = self as? UINavigationController {
+            return navcon.visibleViewController ?? self
+        } else {
+            return self
+        }
     }
 }
 
