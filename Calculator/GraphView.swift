@@ -41,9 +41,11 @@ class GraphView: UIView {
         var x: Double {return Double ((point.x - origin.x) / scale)}
         
         // ---Разрывные точки----
+        
         var oldPoint = OldPoint (y: point.y, normal: false)
         var disContinuity:Bool {
-            return abs(point.y - oldPoint.y) > max(bounds.width, bounds.height) * 1.5}
+            return abs(point.y - oldPoint.y) >
+                              max(bounds.width, bounds.height) * 1.5}
         //-----------------------
         
         for i in 0...Int(bounds.size.width * contentScaleFactor){
@@ -59,6 +61,7 @@ class GraphView: UIView {
                     path.moveToPoint(point)
                     oldPoint =  OldPoint ( y: point.y, normal: true)
                 } else {
+                    
                     if disContinuity {
                         oldPoint =  OldPoint ( y: point.y, normal: false)
                         continue
