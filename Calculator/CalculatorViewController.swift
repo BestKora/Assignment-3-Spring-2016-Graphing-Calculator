@@ -11,6 +11,7 @@ import UIKit
 class CalculatorViewController: UIViewController {
     @IBOutlet weak var history: UILabel!
     @IBOutlet private weak var display: UILabel!
+    
     @IBOutlet weak var graph: UIButton!{
         didSet{
             graph.enabled = false

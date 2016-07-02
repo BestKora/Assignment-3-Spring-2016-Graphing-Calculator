@@ -16,15 +16,26 @@ class GraphView: UIView {
     @IBInspectable
     var color: UIColor = UIColor.blueColor() { didSet { setNeedsDisplay() } }
     
-    private var originSet: CGPoint? { didSet { setNeedsDisplay() } }
-    var origin: CGPoint {
+    var originRelativeToCenter = CGPointZero  { didSet { setNeedsDisplay() } }
+ 
+    private var graphCenter: CGPoint {
+        return convertPoint(center, fromView: superview)
+    }
+   private  var origin: CGPoint  {
         get {
-            return originSet ?? CGPoint(x: bounds.midX, y: bounds.midY)
+            var origin = originRelativeToCenter
+            origin.x += graphCenter.x
+            origin.y += graphCenter.y
+            return origin
         }
         set {
-            originSet = newValue
+            var origin = newValue
+            origin.x -= graphCenter.x
+            origin.y -= graphCenter.y
+            originRelativeToCenter = origin
         }
     }
+
     private let axesDrawer = AxesDrawer(color: UIColor.blueColor())
     override func drawRect(rect: CGRect) {
         axesDrawer.contentScaleFactor = contentScaleFactor

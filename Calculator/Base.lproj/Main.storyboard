@@ -479,7 +479,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rLN-bj-k0B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="596" y="78"/>
+            <point key="canvasLocation" x="713" y="111"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="ofg-D6-1sI">
