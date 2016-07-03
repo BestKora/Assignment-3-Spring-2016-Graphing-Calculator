@@ -37,10 +37,17 @@ class GraphView: UIView {
     }
 
     private let axesDrawer = AxesDrawer(color: UIColor.blueColor())
+    
+    private var lightAxes:Bool = false // рисуем и оцифровываем засечки на осях
+    private var lightCurve:Bool = false // рисуем график
+
+    
     override func drawRect(rect: CGRect) {
         axesDrawer.contentScaleFactor = contentScaleFactor
-        axesDrawer.drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale)
-        drawCurveInRect(bounds, origin: origin, scale: scale)
+        axesDrawer.drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale,
+                                                               light: lightAxes)
+         if !lightCurve {
+            drawCurveInRect(bounds, origin: origin, scale: scale)}
     }
     
     func drawCurveInRect(bounds: CGRect, origin: CGPoint, scale: CGFloat){
@@ -93,13 +100,16 @@ class GraphView: UIView {
         var normal: Bool
     }
     
+    private var snapshot:UIView?
+ 
     func scale(gesture: UIPinchGestureRecognizer) {
         if gesture.state == .Changed {
             scale *= gesture.scale
             gesture.scale = 1.0
         }
     }
-    
+    /* Оригинальный вариант без "замороженного" снимка
+     
     func originMove(gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .Ended: fallthrough
@@ -113,7 +123,33 @@ class GraphView: UIView {
         default: break
         }
     }
+    */
     
+    func originMove(gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .Began:
+            lightAxes = true
+            lightCurve = true
+            snapshot = self.snapshotViewAfterScreenUpdates(false)
+            snapshot!.alpha = 0.4
+            self.addSubview(snapshot!)
+        case .Changed:
+            let translation = gesture.translationInView(self)
+            if translation != CGPointZero {
+                origin.x += translation.x
+                origin.y += translation.y
+                gesture.setTranslation(CGPointZero, inView: self)
+            }
+        case .Ended:
+            snapshot!.removeFromSuperview()
+            snapshot = nil
+            lightAxes = false
+            lightCurve = false
+            setNeedsDisplay()
+        default: break
+        }
+    }
+
     func origin(gesture: UITapGestureRecognizer) {
         if gesture.state == .Ended {
             origin = gesture.locationInView(self)
