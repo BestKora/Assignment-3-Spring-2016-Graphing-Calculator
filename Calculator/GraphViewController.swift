@@ -22,6 +22,7 @@ class GraphViewController: UIViewController {
             
             doubleTapRecognizer.numberOfTapsRequired = 2
             graphView.addGestureRecognizer(doubleTapRecognizer)
+            
             graphView.scale = scale
             graphView.originRelativeToCenter = originRelativeToCenter
         updateUI()
@@ -62,29 +63,30 @@ class GraphViewController: UIViewController {
     var factorOld = CGPointZero
     var widthOld = CGFloat(0.0)
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        widthOld = graphView.bounds.size.width
+        factorOld = CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
+                            y: graphView.originRelativeToCenter.y / graphView.bounds.size.height )
+    }
+
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         if !(graphView.bounds.size.width == widthOld) {
-            
             graphView.originRelativeToCenter = CGPoint(x: factorOld.x * graphView.bounds.size.width,
                                                         y: factorOld.y * graphView.bounds.size.height)
             
         }
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        widthOld = graphView.bounds.size.width
-        factorOld = CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
-                         y: graphView.originRelativeToCenter.y / graphView.bounds.size.height )
-    }
-
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         scale = graphView.scale
-        originFactorDefault = CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
-                                      y: graphView.originRelativeToCenter.y / graphView.bounds.size.height)
+        originFactorDefault =
+            CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
+                    y: graphView.originRelativeToCenter.y / graphView.bounds.size.height)
     }
 }
