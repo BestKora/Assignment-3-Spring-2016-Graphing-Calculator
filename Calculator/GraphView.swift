@@ -52,51 +52,40 @@ class GraphView: UIView {
     
     func drawCurveInRect(bounds: CGRect, origin: CGPoint, scale: CGFloat){
         color.set()
-        let path = UIBezierPath()
-        path.lineWidth = lineWidth
-        var point = CGPoint()
-        
-        var x: Double {return Double ((point.x - origin.x) / scale)}
+      
+        var xGraph, yGraph :CGFloat
+        var x: Double {return Double ((xGraph - origin.x) / scale)}
         
         // ---Разрывные точки----
-        
-        var oldPoint = OldPoint (y: point.y, normal: false)
+        var oldPoint = OldPoint (yGraph: 0.0, normal: false)
         var disContinuity:Bool {
-            return abs(point.y - oldPoint.y) >
+            return abs( yGraph - oldPoint.yGraph) >
                               max(bounds.width, bounds.height) * 1.5}
         //-----------------------
         
+        let path = UIBezierPath()
+        path.lineWidth = lineWidth
         for i in 0...Int(bounds.size.width * contentScaleFactor){
-            point.x = CGFloat(i) / contentScaleFactor
+            xGraph = CGFloat(i) / contentScaleFactor
+            guard let y = (yForX)?(x: x) where y.isFinite
+                                    else { oldPoint.normal = false;  continue}
+            yGraph = origin.y - CGFloat(y) * scale
             
-            if let y = (yForX)?(x: x) {
-                if !y.isFinite {
-                    oldPoint.normal = false
-                    continue
-                }
-                point.y = origin.y - CGFloat(y) * scale
-                if !oldPoint.normal{
-                    path.moveToPoint(point)
-                    oldPoint =  OldPoint ( y: point.y, normal: true)
-                } else {
-                    
-                    if disContinuity {
-                        oldPoint =  OldPoint ( y: point.y, normal: false)
-                        continue
-                    } else {
-                        path.addLineToPoint(point)
-                        oldPoint =  OldPoint(y: point.y, normal: true)
-                    }
-                }
+            if !oldPoint.normal{
+                path.moveToPoint(CGPoint(x: xGraph, y: yGraph))
             } else {
-                oldPoint.normal = false
+                guard !disContinuity else {
+                    oldPoint =  OldPoint ( yGraph: yGraph, normal: false)
+                    continue }
+                path.addLineToPoint(CGPoint(x: xGraph, y: yGraph))
             }
+            oldPoint =  OldPoint (yGraph: yGraph, normal: true)
         }
         path.stroke()
     }
     
     private struct OldPoint {
-        var y: CGFloat
+        var yGraph: CGFloat
         var normal: Bool
     }
     
