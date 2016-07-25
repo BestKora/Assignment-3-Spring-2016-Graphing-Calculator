@@ -16,6 +16,7 @@
 		E40D9B951CFBE78B0087553A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E40D9B931CFBE78B0087553A /* LaunchScreen.storyboard */; };
 		E40D9B9E1CFBE8120087553A /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40D9B9D1CFBE8120087553A /* CalculatorViewController.swift */; };
 		E40D9BA01CFBE82D0087553A /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E40D9B9F1CFBE82D0087553A /* CalculatorBrain.swift */; };
+		E4AEAEF71D3FAF680077AAA6 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AEAEF61D3FAF680077AAA6 /* test.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		E40D9B961CFBE78B0087553A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E40D9B9D1CFBE8120087553A /* CalculatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
 		E40D9B9F1CFBE82D0087553A /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
+		E4AEAEF61D3FAF680077AAA6 /* test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				E40D9B9D1CFBE8120087553A /* CalculatorViewController.swift */,
 				E40D9B8E1CFBE78B0087553A /* Main.storyboard */,
 				E40945101D20654C00CFDC52 /* GraphView.swift */,
+				E4AEAEF61D3FAF680077AAA6 /* test.swift */,
 				E402CC0D1D1C5C5B00DB2D0D /* GraphViewController.swift */,
 				E40D9B9F1CFBE82D0087553A /* CalculatorBrain.swift */,
 				E40945121D21499200CFDC52 /* AxesDrawer.swift */,
@@ -161,6 +164,7 @@
 				E40D9B9E1CFBE8120087553A /* CalculatorViewController.swift in Sources */,
 				E40D9B8B1CFBE78B0087553A /* AppDelegate.swift in Sources */,
 				E40945131D21499200CFDC52 /* AxesDrawer.swift in Sources */,
+				E4AEAEF71D3FAF680077AAA6 /* test.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
