@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CalculatorViewController: UIViewController {
+class CalculatorViewController: UIViewController, UISplitViewControllerDelegate {
     @IBOutlet weak var history: UILabel!
     @IBOutlet private weak var display: UILabel!
     
@@ -16,6 +16,9 @@ class CalculatorViewController: UIViewController {
         didSet{
             graph.enabled = false
         }
+    }
+    private struct Storyboard{
+        static let ShowGraph = "Show Graph"
     }
     
     private var userIsInTheMiddleOfTyping = false
@@ -75,6 +78,17 @@ class CalculatorViewController: UIViewController {
 
     
     private var brain = CalculatorBrain()
+    
+    private let defaults = NSUserDefaults.standardUserDefaults()
+    private struct Keys {
+        static let Program = "CalculatorViewController.Program"
+    }
+    
+    typealias PropertyList = AnyObject
+    private var program: PropertyList? {
+        get { return defaults.objectForKey(Keys.Program) as? [AnyObject] }
+        set { defaults.setObject(newValue, forKey: Keys.Program) }
+    }
     
     @IBAction private func performOperation(sender: UIButton) {
         if userIsInTheMiddleOfTyping {
@@ -149,12 +163,69 @@ class CalculatorViewController: UIViewController {
             
             graphVC.navigationItem.title = brain.description
             
+             graphVC.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+             graphVC.navigationItem.leftItemsSupplementBackButton = true
+
+            
             graphVC.yForX = { [ weak weakSelf = self] x in
                 weakSelf?.brain.variableValues["M"] = x
                 return weakSelf?.brain.result.0
             }
         }
     }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        if !brain.isPartialResult{
+            program = brain.program
+        }
+
+    }
+    
+    @IBAction func showGraph(sender: UIButton) {
+        program = brain.program
+        if let gvc = splitViewController?.viewControllers.last?.contentViewController as? GraphViewController{
+            prepareGraph(gvc)
+        } else {
+            performSegueWithIdentifier(Storyboard.ShowGraph, sender: nil)
+        }
+
+    }
+    
+    private func prepareGraph(graphVC : GraphViewController){
+        graphVC.navigationItem.title = brain.description
+        graphVC.yForX = { [ weak weakSelf = self] x in
+                     weakSelf?.brain.variableValues["M"] = x
+                     return weakSelf?.brain.result.0
+        }
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        splitViewController?.delegate = self
+        if let savedProgram = program as? [AnyObject]{
+            brain.program = savedProgram
+            resultValue = brain.result
+            if let graphvc = splitViewController?.viewControllers.last?.contentViewController as? GraphViewController {
+                prepareGraph(graphvc)
+            }
+        }
+    }
+    
+    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController, ontoPrimaryViewController primaryViewController: UIViewController) -> Bool
+    {
+        if primaryViewController.contentViewController == self {
+            if let gvc = secondaryViewController.contentViewController as? GraphViewController where gvc.yForX == nil {
+                if program != nil {
+                    return false
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+
 }
 
 extension UIViewController {

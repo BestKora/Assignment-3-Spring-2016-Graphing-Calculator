@@ -92,7 +92,7 @@
                                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
                                                         <connections>
-                                                            <segue destination="VfU-VT-Rn7" kind="showDetail" identifier="Show Graph" id="7Dr-j5-SFI"/>
+                                                            <action selector="showGraph:" destination="X7g-pg-r8e" eventType="touchUpInside" id="yBo-AT-P2W"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -475,11 +475,12 @@
                         <outlet property="display" destination="7U1-3u-3Sm" id="LDa-Ge-9nY"/>
                         <outlet property="graph" destination="gLT-ba-dLa" id="qms-TV-ATa"/>
                         <outlet property="history" destination="Eek-ND-7bp" id="rrc-5x-cjf"/>
+                        <segue destination="VfU-VT-Rn7" kind="show" identifier="Show Graph" id="uln-KQ-OOI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rLN-bj-k0B" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="713" y="111"/>
+            <point key="canvasLocation" x="713" y="78"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="ofg-D6-1sI">
@@ -528,10 +529,10 @@
             </objects>
             <point key="canvasLocation" x="596" y="866"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Calculator-->
         <scene sceneID="1zN-MM-UlF">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6vk-Ng-ks2" sceneMemberID="viewController">
+                <navigationController title="Calculator" automaticallyAdjustsScrollViewInsets="NO" id="6vk-Ng-ks2" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="IEo-Qp-wTx">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -562,13 +563,13 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="F1H-Rh-gCw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-89" y="866"/>
+            <point key="canvasLocation" x="-114" y="866"/>
         </scene>
     </scenes>
     <resources>
         <image name="graph" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="7Dr-j5-SFI"/>
+        <segue reference="uln-KQ-OOI"/>
     </inferredMetricsTieBreakers>
 </document>
