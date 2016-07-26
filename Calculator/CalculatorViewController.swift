@@ -201,7 +201,9 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
         if !brain.isPartialResult{
+            
             program = brain.program
         }
     }
