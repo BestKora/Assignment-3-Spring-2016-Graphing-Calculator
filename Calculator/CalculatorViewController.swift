@@ -76,7 +76,6 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
         }
     }
 
-    
     private var brain = CalculatorBrain()
     
     private let defaults = NSUserDefaults.standardUserDefaults()
@@ -85,6 +84,7 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     }
     
     typealias PropertyList = AnyObject
+    
     private var program: PropertyList? {
         get { return defaults.objectForKey(Keys.Program) as? [AnyObject] }
         set { defaults.setObject(newValue, forKey: Keys.Program) }
@@ -157,19 +157,44 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let graphVC = segue.destinationViewController.contentViewController
-                                                         as? GraphViewController,
-               identifier = segue.identifier where identifier == "Show Graph" {
+        if let gVC = segue.destinationViewController.contentViewController
+                                                           as? GraphViewController
+            where segue.identifier == Storyboard.ShowGraph {
+            prepareGraphVC(gVC)
+        }
+    }
+    
+    @IBAction func showGraph(sender: UIButton) {
+        program = brain.program
+        if let gVC = splitViewController?.viewControllers.last?.contentViewController
+                                                              as? GraphViewController{
+            prepareGraphVC(gVC)
+        } else {
+            performSegueWithIdentifier(Storyboard.ShowGraph, sender: nil)
+        }
+    }
+    
+    private func prepareGraphVC(graphVC : GraphViewController){
+        graphVC.navigationItem.title = brain.description
+        graphVC.yForX = { [ weak weakSelf = self] x in
+                     weakSelf?.brain.variableValues["M"] = x
+                     return weakSelf?.brain.result.0
+        }
+    }
+    
+  // MARK: - Life Cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        splitViewController?.delegate = self
+        
+        if let savedProgram = program as? [AnyObject]{
             
-            graphVC.navigationItem.title = brain.description
-            
-             graphVC.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
-             graphVC.navigationItem.leftItemsSupplementBackButton = true
-
-            
-            graphVC.yForX = { [ weak weakSelf = self] x in
-                weakSelf?.brain.variableValues["M"] = x
-                return weakSelf?.brain.result.0
+            brain.program = savedProgram
+            resultValue = brain.result
+            if let gVC = splitViewController?.viewControllers.last?.contentViewController
+                                                                as? GraphViewController {
+                prepareGraphVC(gVC)
             }
         }
     }
@@ -179,43 +204,17 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
         if !brain.isPartialResult{
             program = brain.program
         }
-
-    }
-    
-    @IBAction func showGraph(sender: UIButton) {
-        program = brain.program
-        if let gvc = splitViewController?.viewControllers.last?.contentViewController as? GraphViewController{
-            prepareGraph(gvc)
-        } else {
-            performSegueWithIdentifier(Storyboard.ShowGraph, sender: nil)
-        }
-
-    }
-    
-    private func prepareGraph(graphVC : GraphViewController){
-        graphVC.navigationItem.title = brain.description
-        graphVC.yForX = { [ weak weakSelf = self] x in
-                     weakSelf?.brain.variableValues["M"] = x
-                     return weakSelf?.brain.result.0
-        }
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        splitViewController?.delegate = self
-        if let savedProgram = program as? [AnyObject]{
-            brain.program = savedProgram
-            resultValue = brain.result
-            if let graphvc = splitViewController?.viewControllers.last?.contentViewController as? GraphViewController {
-                prepareGraph(graphvc)
-            }
-        }
-    }
+    // MARK: - UISplitViewControllerDelegate
     
-    func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController: UIViewController, ontoPrimaryViewController primaryViewController: UIViewController) -> Bool
+    func splitViewController(splitViewController: UISplitViewController,
+            collapseSecondaryViewController secondaryViewController: UIViewController,
+                ontoPrimaryViewController primaryViewController: UIViewController) -> Bool
     {
         if primaryViewController.contentViewController == self {
-            if let gvc = secondaryViewController.contentViewController as? GraphViewController where gvc.yForX == nil {
+            if let gvc = secondaryViewController.contentViewController
+                                               as? GraphViewController where gvc.yForX == nil {
                 if program != nil {
                     return false
                 }
@@ -224,8 +223,6 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
         }
         return false
     }
-
-
 }
 
 extension UIViewController {
