@@ -24,7 +24,7 @@ class GraphViewController: UIViewController {
             graphView.addGestureRecognizer(doubleTapRecognizer)
             
             graphView.scale = scale
-            graphView.originRelativeToCenter = originRelativeToCenter
+            graphView.originRelativeToCenter = pointRelativeToCenter
         updateUI()
         }
     }
@@ -44,64 +44,42 @@ class GraphViewController: UIViewController {
         set { defaults.setObject(newValue, forKey: Keys.Scale) }
     }
     
-    var originFactorDefault: CGPoint {
+    var pointRelativeToCenter: CGPoint {
         get {
             let originArray = defaults.objectForKey(Keys.Origin) as? [CGFloat]
-            return CGPoint(x: originArray?.first ?? CGFloat (0.0),
+            let factor = CGPoint(x: originArray?.first ?? CGFloat (0.0),
                            y: originArray?.last ?? CGFloat (0.0))
+            return CGPoint (x: factor.x * graphView.bounds.size.width,
+                            y: factor.y * graphView.bounds.size.height)
+
         }
         set {
-            defaults.setObject([newValue.x, newValue.y], forKey: Keys.Origin)
+            let factor =
+                CGPoint(x: newValue.x / graphView.bounds.size.width,
+                        y: newValue.y / graphView.bounds.size.height)
+            defaults.setObject([factor.x, factor.y], forKey: Keys.Origin)
         }
     }
-    
-    var originRelativeToCenter: CGPoint {
-        return CGPoint (x: originFactorDefault.x * graphView.bounds.size.width,
-                        y: originFactorDefault.y * graphView.bounds.size.height)
-    }
-    
-/*    var factorOld = CGPointZero
+
     var widthOld = CGFloat(0.0)
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
         widthOld = graphView.bounds.size.width
-        factorOld = CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
-                            y: graphView.originRelativeToCenter.y / graphView.bounds.size.height )
+        pointRelativeToCenter = graphView.originRelativeToCenter
     }
-
+    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
         if !(graphView.bounds.size.width == widthOld) {
-            graphView.originRelativeToCenter = CGPoint(x: factorOld.x * graphView.bounds.size.width,
-                                                        y: factorOld.y * graphView.bounds.size.height)
-            
+           graphView.originRelativeToCenter =  pointRelativeToCenter
         }
-    }*/
-    
-    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-        
-        let  factorOld = CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
-                                 y: graphView.originRelativeToCenter.y / graphView.bounds.size.height )
-        
-        
-        coordinator.animateAlongsideTransition({(context) in
-            self.graphView.originRelativeToCenter =
-                    CGPoint(x: factorOld.x * self.graphView.bounds.size.width,
-                            y: factorOld.y * self.graphView.bounds.size.height)
-            
-            }, completion:nil)
     }
-
-    override func viewWillDisappear(animated: Bool) {
+   
+       override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         scale = graphView.scale
-        originFactorDefault =
-            CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
-                    y: graphView.originRelativeToCenter.y / graphView.bounds.size.height)
+        pointRelativeToCenter = graphView.originRelativeToCenter
     }
 }
