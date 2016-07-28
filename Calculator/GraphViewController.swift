@@ -60,7 +60,7 @@ class GraphViewController: UIViewController {
                         y: originFactorDefault.y * graphView.bounds.size.height)
     }
     
-    var factorOld = CGPointZero
+/*    var factorOld = CGPointZero
     var widthOld = CGFloat(0.0)
     
     override func viewWillLayoutSubviews() {
@@ -80,8 +80,23 @@ class GraphViewController: UIViewController {
                                                         y: factorOld.y * graphView.bounds.size.height)
             
         }
-    }
+    }*/
     
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        
+        let  factorOld = CGPoint(x: graphView.originRelativeToCenter.x / graphView.bounds.size.width,
+                                 y: graphView.originRelativeToCenter.y / graphView.bounds.size.height )
+        
+        
+        coordinator.animateAlongsideTransition({(context) in
+            self.graphView.originRelativeToCenter =
+                    CGPoint(x: factorOld.x * self.graphView.bounds.size.width,
+                            y: factorOld.y * self.graphView.bounds.size.height)
+            
+            }, completion:nil)
+    }
+
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         scale = graphView.scale
