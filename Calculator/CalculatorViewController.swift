@@ -86,7 +86,7 @@ class CalculatorViewController: UIViewController, UISplitViewControllerDelegate 
     typealias PropertyList = AnyObject
     
     private var program: PropertyList? {
-        get { return defaults.objectForKey(Keys.Program) as? [AnyObject] }
+        get { return defaults.objectForKey(Keys.Program) }
         set { defaults.setObject(newValue, forKey: Keys.Program) }
     }
     

@@ -24,7 +24,7 @@ class GraphViewController: UIViewController {
             graphView.addGestureRecognizer(doubleTapRecognizer)
             
             graphView.scale = scale
-            graphView.originRelativeToCenter = pointRelativeToCenter
+            graphView.originRelativeToCenter = originRelativeToCenter
         updateUI()
         }
     }
@@ -44,11 +44,13 @@ class GraphViewController: UIViewController {
         set { defaults.setObject(newValue, forKey: Keys.Scale) }
     }
     
-    var pointRelativeToCenter: CGPoint {
+    var originRelativeToCenter: CGPoint {
         get {
             let originArray = defaults.objectForKey(Keys.Origin) as? [CGFloat]
+            
             let factor = CGPoint(x: originArray?.first ?? CGFloat (0.0),
                            y: originArray?.last ?? CGFloat (0.0))
+            
             return CGPoint (x: factor.x * graphView.bounds.size.width,
                             y: factor.y * graphView.bounds.size.height)
 
@@ -57,6 +59,7 @@ class GraphViewController: UIViewController {
             let factor =
                 CGPoint(x: newValue.x / graphView.bounds.size.width,
                         y: newValue.y / graphView.bounds.size.height)
+            
             defaults.setObject([factor.x, factor.y], forKey: Keys.Origin)
         }
     }
@@ -66,20 +69,20 @@ class GraphViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         widthOld = graphView.bounds.size.width
-        pointRelativeToCenter = graphView.originRelativeToCenter
+        originRelativeToCenter = graphView.originRelativeToCenter
     }
     
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !(graphView.bounds.size.width == widthOld) {
-           graphView.originRelativeToCenter =  pointRelativeToCenter
+           graphView.originRelativeToCenter =  originRelativeToCenter
         }
     }
    
        override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         scale = graphView.scale
-        pointRelativeToCenter = graphView.originRelativeToCenter
+        originRelativeToCenter = graphView.originRelativeToCenter
     }
 }
